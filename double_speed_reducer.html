@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Double Speed Reducer</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #07145f, #1428a0);
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #101b72;
+        }
+
+        .deskripsi {
+            text-align: center;
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        .input-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #aaa;
+            border-radius: 7px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background-color: #1735c7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #10259a;
+        }
+
+        .hasil {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #eef1ff;
+            border-left: 5px solid #1735c7;
+            border-radius: 8px;
+            line-height: 1.8;
+        }
+
+        .rumus {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f2f2f2;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .input-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Double Speed Reducer</h1>
+
+    <p class="deskripsi">
+        Program Interaktif Perhitungan Putaran dan Torsi
+    </p>
+
+    <div class="input-container">
+
+        <div>
+            <label for="n1">n1 - Putaran awal (rpm)</label>
+            <input type="number" id="n1" value="500">
+        </div>
+
+        <div>
+            <label for="N1">N1 - Jumlah gigi 1 (t)</label>
+            <input type="number" id="N1" value="20">
+        </div>
+
+        <div>
+            <label for="N2">N2 - Jumlah gigi 2 (t)</label>
+            <input type="number" id="N2" value="70">
+        </div>
+
+        <div>
+            <label for="N3">N3 - Jumlah gigi 3 (t)</label>
+            <input type="number" id="N3" value="18">
+        </div>
+
+        <div>
+            <label for="N4">N4 - Jumlah gigi 4 (t)</label>
+            <input type="number" id="N4" value="54">
+        </div>
+
+        <div>
+            <label for="P">P - Daya (kW)</label>
+            <input type="number" id="P" value="10">
+        </div>
+
+    </div>
+
+    <button onclick="hitung()">HITUNG</button>
+
+    <div id="hasil" class="hasil">
+        Masukkan nilai kemudian tekan tombol <b>HITUNG</b>.
+    </div>
+
+    <div class="rumus">
+        <b>Rumus Torsi</b>
+        <br>
+        T = 9550 × P / n
+        <br><br>
+        T = torsi (Nm), P = daya (kW), n = putaran (rpm)
+    </div>
+
+</div>
+
+<script>
+
+function hitung() {
+
+    // Mengambil nilai input
+    let n1 = parseFloat(document.getElementById("n1").value);
+    let N1 = parseFloat(document.getElementById("N1").value);
+    let N2 = parseFloat(document.getElementById("N2").value);
+    let N3 = parseFloat(document.getElementById("N3").value);
+    let N4 = parseFloat(document.getElementById("N4").value);
+    let P = parseFloat(document.getElementById("P").value);
+
+    // Mengecek input
+    if (
+        isNaN(n1) ||
+        isNaN(N1) ||
+        isNaN(N2) ||
+        isNaN(N3) ||
+        isNaN(N4) ||
+        isNaN(P)
+    ) {
+        document.getElementById("hasil").innerHTML =
+            "<b>Input belum lengkap.</b> Silakan isi semua data.";
+        return;
+    }
+
+    if (N1 <= 0 || N2 <= 0 || N3 <= 0 || N4 <= 0) {
+        document.getElementById("hasil").innerHTML =
+            "<b>Input tidak valid.</b> Jumlah gigi harus lebih dari 0.";
+        return;
+    }
+
+    // Perhitungan tahap pertama
+    let n2 = n1 * (N1 / N2);
+
+    // Putaran poros kedua sama dengan poros ketiga
+    let n3 = n2;
+
+    // Perhitungan tahap kedua
+    let n4 = n3 * (N3 / N4);
+
+    // Total reduction
+    let reduction = n1 / n4;
+
+    // Perhitungan torsi
+    let T1 = 9550 * P / n1;
+    let T4 = 9550 * P / n4;
+
+    // Menampilkan hasil
+    document.getElementById("hasil").innerHTML =
+
+        "<b>Hasil Perhitungan:</b><br><br>" +
+
+        "1. n2 = " +
+        n1.toFixed(2) +
+        " × (" +
+        N1 +
+        "/" +
+        N2 +
+        ") = <b>" +
+        n2.toFixed(2) +
+        " rpm</b><br>" +
+
+        "2. n3 = n2 = <b>" +
+        n3.toFixed(2) +
+        " rpm</b><br>" +
+
+        "3. n4 = " +
+        n3.toFixed(2) +
+        " × (" +
+        N3 +
+        "/" +
+        N4 +
+        ") = <b>" +
+        n4.toFixed(2) +
+        " rpm</b><br>" +
+
+        "4. Total reduction = " +
+        n1.toFixed(2) +
+        " / " +
+        n4.toFixed(2) +
+        " = <b>" +
+        reduction.toFixed(2) +
+        " : 1</b><br><br>" +
+
+        "<b>Perhitungan Torsi:</b><br>" +
+
+        "Torsi input = <b>" +
+        T1.toFixed(2) +
+        " Nm</b><br>" +
+
+        "Torsi output = <b>" +
+        T4.toFixed(2) +
+        " Nm</b>";
+
+}
+
+</script>
+
+</body>
+</html>
